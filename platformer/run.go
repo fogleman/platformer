@@ -5,6 +5,7 @@ import (
 	"log"
 	"runtime"
 
+	"github.com/fogleman/platformer/gg"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
@@ -42,14 +43,25 @@ func Run() {
 
 	// gl setup
 	gl.Enable(gl.TEXTURE_2D)
-	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
-	sheet, err := NewSpriteSheet("textures/sprites.png", "textures/sprites.csv")
+	program, err := gg.NewProgram("shaders/vertex.glsl", "shaders/fragment.glsl")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(program)
+
+	sheet, err := NewSheet("textures/sprites.png", "textures/sprites.csv")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	fmt.Println(sheet.texture)
+
+	buffer := gg.NewBuffer()
+	tiles := make([]Tile, 16)
+	tiles[0] = sheet.Tile("Grass", 0, 0)
+	buffer.SetItems(tiles)
 
 	// run loop
 	for !window.ShouldClose() {
