@@ -62,19 +62,21 @@ func Run() {
 }
 
 func drawBuffer(window *glfw.Window) {
-	w, h := window.GetFramebufferSize()
-	var x, y float32 = (float32(w) - 2048) / 2, float32(h) - 4096
+	ww, wh := window.GetFramebufferSize()
+	var scale float32 = 0.5
+	var tw, th float32 = 2048 * scale, 4096 * scale
+	var x, y float32 = (float32(ww) - tw) / 2, float32(wh) - th
 	gl.PushMatrix()
-	gl.Ortho(0, float64(w), 0, float64(h), -1, 1)
+	gl.Ortho(0, float64(ww), 0, float64(wh), -1, 1)
 	gl.Begin(gl.QUADS)
 	gl.TexCoord2f(0, 1)
 	gl.Vertex2f(x, y)
 	gl.TexCoord2f(1, 1)
-	gl.Vertex2f(x+2048, y)
+	gl.Vertex2f(x+tw, y)
 	gl.TexCoord2f(1, 0)
-	gl.Vertex2f(x+2048, y+4096)
+	gl.Vertex2f(x+tw, y+th)
 	gl.TexCoord2f(0, 0)
-	gl.Vertex2f(x, y+4096)
+	gl.Vertex2f(x, y+th)
 	gl.End()
 	gl.PopMatrix()
 }
