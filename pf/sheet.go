@@ -1,4 +1,4 @@
-package platformer
+package pf
 
 import (
 	"image"

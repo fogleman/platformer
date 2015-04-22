@@ -1,4 +1,4 @@
-package gg
+package gfx
 
 import (
 	"reflect"
@@ -22,6 +22,10 @@ func (b *Buffer) Delete() {
 
 func (b *Buffer) Bind() {
 	gl.BindBuffer(gl.ARRAY_BUFFER, b.Handle)
+}
+
+func (b *Buffer) Unbind() {
+	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 }
 
 func (b *Buffer) SetItems(data interface{}) {

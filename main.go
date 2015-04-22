@@ -1,7 +1,7 @@
 package main
 
-import "github.com/fogleman/platformer/platformer"
+import "github.com/fogleman/platformer/pf"
 
 func main() {
-	platformer.Run()
+	pf.Run()
 }

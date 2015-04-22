@@ -1,4 +1,4 @@
-package gg
+package gfx
 
 import (
 	"fmt"
@@ -36,25 +36,43 @@ func (p *Program) Use() {
 	gl.UseProgram(p.Handle)
 }
 
-func (p *Program) UniformLocation(name string) int32 {
-	return gl.GetUniformLocation(p.Handle, gl.Str(name+"\x00"))
+func (p *Program) AttributeLocation(name string) int {
+	return int(gl.GetAttribLocation(p.Handle, gl.Str(name+"\x00")))
 }
 
-func (p *Program) AttributeLocation(name string) int32 {
-	return gl.GetAttribLocation(p.Handle, gl.Str(name+"\x00"))
+func (p *Program) AttributeBuffer(buffer *Buffer, location, size, offset, stride int) {
+	buffer.Bind()
+	gl.VertexAttribPointer(
+		uint32(location), int32(size), gl.FLOAT, false, int32(stride),
+		gl.PtrOffset(offset))
+	buffer.Unbind()
 }
 
-func (p *Program) UniformMatrix(location int32, value Matrix) {
+func (p *Program) UniformLocation(name string) int {
+	return int(gl.GetUniformLocation(p.Handle, gl.Str(name+"\x00")))
+}
+
+func (p *Program) UniformMatrix(location int, value Matrix) {
 	data := value.ColMajor()
-	gl.UniformMatrix4fv(location, 1, false, &data[0])
+	gl.UniformMatrix4fv(int32(location), 1, false, &data[0])
 }
 
-func (p *Program) UniformInt(location int32, value int32) {
-	gl.Uniform1i(location, value)
+func (p *Program) UniformInt(location int, value int32) {
+	gl.Uniform1i(int32(location), value)
 }
 
-func (p *Program) UniformFloat(location int32, value float32) {
-	gl.Uniform1f(location, value)
+func (p *Program) UniformFloat(location int, value float32) {
+	gl.Uniform1f(int32(location), value)
+}
+
+func (p *Program) Draw(count int, attributes ...int) {
+	for _, location := range attributes {
+		gl.EnableVertexAttribArray(uint32(location))
+	}
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(count))
+	for _, location := range attributes {
+		gl.DisableVertexAttribArray(uint32(location))
+	}
 }
 
 func CompileShader(shaderType uint32, shaderSource string) (uint32, error) {

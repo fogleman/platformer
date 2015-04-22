@@ -1,10 +1,10 @@
-package platformer
+package pf
 
 import (
 	"log"
 	"runtime"
 
-	"github.com/fogleman/platformer/gg"
+	"github.com/fogleman/platformer/gfx"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
@@ -57,7 +57,7 @@ func Run() {
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 		w, h := window.GetFramebufferSize()
-		layer.matrix = gg.Orthographic(0, float64(w), 0, float64(h), -1, 1)
+		layer.matrix = gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1)
 		layer.Draw()
 		window.SwapBuffers()
 		glfw.PollEvents()
