@@ -25,10 +25,10 @@ func NewLayer(sheet *Sheet) *Layer {
 	}
 	buffer := gg.NewBuffer()
 	buffer.Bind()
-	tiles := make([]Tile, 3)
-	tiles[0] = sheet.Tile("GrassMid", 0, 0)
-	tiles[1] = sheet.Tile("GrassMid", 128, 0)
-	tiles[2] = sheet.Tile("GrassMid", 256, 0)
+	tiles := make([]Tile, 16)
+	for i := 0; i < 16; i++ {
+		tiles[i] = sheet.Tile("GrassMid", i*128, 0)
+	}
 	buffer.SetItems(tiles)
 	layer := Layer{}
 	layer.sheet = sheet
@@ -51,7 +51,7 @@ func (layer *Layer) Draw() {
 	gl.EnableVertexAttribArray(layer.uvLocation)
 	gl.VertexAttribPointer(layer.positionLocation, 2, gl.FLOAT, false, 16, gl.PtrOffset(0))
 	gl.VertexAttribPointer(layer.uvLocation, 2, gl.FLOAT, false, 16, gl.PtrOffset(8))
-	gl.DrawArrays(gl.TRIANGLES, 0, 6*3)
+	gl.DrawArrays(gl.TRIANGLES, 0, 6*16)
 	gl.DisableVertexAttribArray(layer.positionLocation)
 	gl.DisableVertexAttribArray(layer.uvLocation)
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
