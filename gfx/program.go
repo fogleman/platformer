@@ -40,7 +40,11 @@ func (p *Program) AttributeLocation(name string) int {
 	return int(gl.GetAttribLocation(p.Handle, gl.Str(name+"\x00")))
 }
 
-func (p *Program) AttributeBuffer(buffer *Buffer, location, size, offset, stride int) {
+func (p *Program) UniformLocation(name string) int {
+	return int(gl.GetUniformLocation(p.Handle, gl.Str(name+"\x00")))
+}
+
+func (p *Program) SetBuffer(location, size, offset, stride int, buffer *Buffer) {
 	buffer.Bind()
 	gl.VertexAttribPointer(
 		uint32(location), int32(size), gl.FLOAT, false, int32(stride),
@@ -48,20 +52,16 @@ func (p *Program) AttributeBuffer(buffer *Buffer, location, size, offset, stride
 	buffer.Unbind()
 }
 
-func (p *Program) UniformLocation(name string) int {
-	return int(gl.GetUniformLocation(p.Handle, gl.Str(name+"\x00")))
-}
-
-func (p *Program) UniformMatrix(location int, value Matrix) {
+func (p *Program) SetMatrix(location int, value Matrix) {
 	data := value.ColMajor()
 	gl.UniformMatrix4fv(int32(location), 1, false, &data[0])
 }
 
-func (p *Program) UniformInt(location int, value int32) {
+func (p *Program) SetInt(location int, value int32) {
 	gl.Uniform1i(int32(location), value)
 }
 
-func (p *Program) UniformFloat(location int, value float32) {
+func (p *Program) SetFloat(location int, value float32) {
 	gl.Uniform1f(int32(location), value)
 }
 

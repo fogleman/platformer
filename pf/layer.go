@@ -7,14 +7,14 @@ import (
 )
 
 type Layer struct {
-	sheet            *Sheet
-	program          *gfx.Program
-	buffer           *gfx.Buffer
-	matrixLocation   int
-	samplerLocation  int
-	positionLocation int
-	uvLocation       int
-	matrix           gfx.Matrix
+	sheet       *Sheet
+	program     *gfx.Program
+	buffer      *gfx.Buffer
+	matrixLoc   int
+	samplerLoc  int
+	positionLoc int
+	uvLoc       int
+	matrix      gfx.Matrix
 }
 
 func NewLayer(sheet *Sheet) *Layer {
@@ -34,19 +34,19 @@ func NewLayer(sheet *Sheet) *Layer {
 	layer.sheet = sheet
 	layer.program = program
 	layer.buffer = buffer
-	layer.matrixLocation = program.UniformLocation("matrix")
-	layer.samplerLocation = program.UniformLocation("sampler")
-	layer.positionLocation = program.AttributeLocation("position")
-	layer.uvLocation = program.AttributeLocation("uv")
+	layer.matrixLoc = program.UniformLocation("matrix")
+	layer.samplerLoc = program.UniformLocation("sampler")
+	layer.positionLoc = program.AttributeLocation("position")
+	layer.uvLoc = program.AttributeLocation("uv")
 	return &layer
 }
 
 func (layer *Layer) Draw() {
 	program := layer.program
 	program.Use()
-	program.UniformMatrix(layer.matrixLocation, layer.matrix)
-	program.UniformInt(layer.samplerLocation, 0)
-	program.AttributeBuffer(layer.buffer, layer.positionLocation, 2, 0, 16)
-	program.AttributeBuffer(layer.buffer, layer.uvLocation, 2, 8, 16)
-	program.Draw(6*17, layer.positionLocation, layer.uvLocation)
+	program.SetMatrix(layer.matrixLoc, layer.matrix)
+	program.SetInt(layer.samplerLoc, 0)
+	program.SetBuffer(layer.positionLoc, 2, 0, 16, layer.buffer)
+	program.SetBuffer(layer.uvLoc, 2, 8, 16, layer.buffer)
+	program.Draw(6*17, layer.positionLoc, layer.uvLoc)
 }
