@@ -48,6 +48,11 @@ func NewSheet(pngPath, csvPath string) (*Sheet, error) {
 	return &Sheet{size.X, size.Y, texture, items}, nil
 }
 
+// func (sheet *Sheet) Bind() {
+// 	gl.ActiveTexture(gl.TEXTURE0)
+// 	gl.BindTexture(gl.TEXTURE_2D, sheet.texture)
+// }
+
 func (sheet *Sheet) Tile(name string, x, y int) Tile {
 	item := sheet.items[name]
 	x0 := float32(x)
@@ -55,9 +60,9 @@ func (sheet *Sheet) Tile(name string, x, y int) Tile {
 	x1 := float32(x + item.w)
 	y1 := float32(y + item.h)
 	u0 := float32(item.x) / float32(sheet.w)
-	v0 := float32(item.y) / float32(sheet.h)
+	v1 := float32(item.y) / float32(sheet.h)
 	u1 := float32(item.x+item.w) / float32(sheet.w)
-	v1 := float32(item.y+item.h) / float32(sheet.h)
+	v0 := float32(item.y+item.h) / float32(sheet.h)
 	return Tile{[6]TileVertex{
 		TileVertex{x0, y0, u0, v0},
 		TileVertex{x1, y0, u1, v0},
@@ -71,6 +76,7 @@ func (sheet *Sheet) Tile(name string, x, y int) Tile {
 func createTexture() uint32 {
 	var texture uint32
 	gl.GenTextures(1, &texture)
+	// gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, texture)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)

@@ -73,6 +73,24 @@ func Perspective(fovy, aspect, near, far float64) Matrix {
 	return Frustum(-xmax, xmax, -ymax, ymax, near, far)
 }
 
+func (m Matrix) RowMajor() [16]float32 {
+	return [16]float32{
+		float32(m.x00), float32(m.x01), float32(m.x02), float32(m.x03),
+		float32(m.x10), float32(m.x11), float32(m.x12), float32(m.x13),
+		float32(m.x20), float32(m.x21), float32(m.x22), float32(m.x23),
+		float32(m.x30), float32(m.x31), float32(m.x32), float32(m.x33),
+	}
+}
+
+func (m Matrix) ColMajor() [16]float32 {
+	return [16]float32{
+		float32(m.x00), float32(m.x10), float32(m.x20), float32(m.x30),
+		float32(m.x01), float32(m.x11), float32(m.x21), float32(m.x31),
+		float32(m.x02), float32(m.x12), float32(m.x22), float32(m.x32),
+		float32(m.x03), float32(m.x13), float32(m.x23), float32(m.x33),
+	}
+}
+
 func (m Matrix) Translate(v Vector) Matrix {
 	return Translate(v).Mul(m)
 }

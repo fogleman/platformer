@@ -36,6 +36,27 @@ func (p *Program) Use() {
 	gl.UseProgram(p.Handle)
 }
 
+func (p *Program) UniformLocation(name string) int32 {
+	return gl.GetUniformLocation(p.Handle, gl.Str(name+"\x00"))
+}
+
+func (p *Program) AttributeLocation(name string) int32 {
+	return gl.GetAttribLocation(p.Handle, gl.Str(name+"\x00"))
+}
+
+func (p *Program) UniformMatrix(location int32, value Matrix) {
+	data := value.ColMajor()
+	gl.UniformMatrix4fv(location, 1, false, &data[0])
+}
+
+func (p *Program) UniformInt(location int32, value int32) {
+	gl.Uniform1i(location, value)
+}
+
+func (p *Program) UniformFloat(location int32, value float32) {
+	gl.Uniform1f(location, value)
+}
+
 func CompileShader(shaderType uint32, shaderSource string) (uint32, error) {
 	shader := gl.CreateShader(shaderType)
 	source := gl.Str(shaderSource + "\x00")

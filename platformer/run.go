@@ -1,11 +1,9 @@
 package platformer
 
 import (
-	"fmt"
 	"log"
 	"runtime"
 
-	"github.com/fogleman/platformer/gg"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
@@ -46,28 +44,19 @@ func Run() {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
-	program, err := gg.NewProgram("shaders/vertex.glsl", "shaders/fragment.glsl")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(program)
-
 	sheet, err := NewSheet("textures/sprites.png", "textures/sprites.csv")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(sheet.texture)
 
-	buffer := gg.NewBuffer()
-	tiles := make([]Tile, 16)
-	tiles[0] = sheet.Tile("Grass", 0, 0)
-	buffer.SetItems(tiles)
+	layer := NewLayer(sheet)
 
 	// run loop
 	for !window.ShouldClose() {
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
-		drawBuffer(window)
+		// drawBuffer(window)
+		layer.Draw()
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
