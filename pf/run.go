@@ -55,8 +55,20 @@ func Run() {
 	spriteLayer := gfx.NewLayer(sheet)
 
 	var tiles []gfx.Tile
+	tiles = append(tiles, sheet.Tile("SignRight", 128, 128))
+	tiles = append(tiles, sheet.Tile("Bush", 512, 128))
+	tiles = append(tiles, sheet.Tile("Cactus", 768, 128))
+	tiles = append(tiles, sheet.Tile("LadderMid", 1024, 128))
+	tiles = append(tiles, sheet.Tile("LadderMid", 1024, 256))
+	tiles = append(tiles, sheet.Tile("LadderMid", 1024, 384))
+	tiles = append(tiles, sheet.Tile("LadderTop", 1024, 512))
+	tiles = append(tiles, sheet.Tile("LeverLeft", 128, 512))
+	// tiles = append(tiles, sheet.Tile("BoxItem", 256, 384))
 	for i := 0; i < 32; i++ {
 		tiles = append(tiles, sheet.Tile("GrassMid", i*128, 0))
+		if i%2 == 1 {
+			tiles = append(tiles, sheet.Tile("GrassHalf", i*128, 384))
+		}
 	}
 	backgroundLayer.SetTiles(tiles)
 
