@@ -74,8 +74,9 @@ func Run() {
 		t := glfw.GetTime()
 		w, h := window.GetFramebufferSize()
 		matrix := gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1)
-		sprite.X = math.Mod(t*200, float64(w))
-		sprite.Name = names[int(t*8)%len(names)]
+		sprite.X = float64(w/2) + math.Sin(t)*float64(w/3)
+		sprite.FlipX = math.Cos(t+0.25) < 0
+		sprite.Name = names[int((math.Sin(t)+1)*16)%len(names)]
 		spriteLayer.SetSprites(sprites)
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
