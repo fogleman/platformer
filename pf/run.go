@@ -61,18 +61,21 @@ func Run() {
 	backgroundLayer.SetTiles(tiles)
 
 	var sprites []*gfx.Sprite
-	sprite := sheet.Sprite("AlienGreenStand")
+	sprite := sheet.Sprite("AlienBlueStand")
 	sprite.SetAnchor(0.5, 0)
 	sprite.SetPosition(0, 128)
 	sprites = append(sprites, sprite)
 	spriteLayer.SetSprites(sprites)
+
+	names := []string{"AlienBlueWalk1", "AlienBlueWalk2"}
 
 	// run loop
 	for !window.ShouldClose() {
 		t := glfw.GetTime()
 		w, h := window.GetFramebufferSize()
 		matrix := gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1)
-		sprite.X = math.Mod(t*100, float64(w))
+		sprite.X = math.Mod(t*200, float64(w))
+		sprite.Name = names[int(t*8)%len(names)]
 		spriteLayer.SetSprites(sprites)
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
