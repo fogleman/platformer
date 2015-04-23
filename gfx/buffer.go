@@ -29,15 +29,19 @@ func (b *Buffer) Unbind() {
 }
 
 func (b *Buffer) SetItems(data interface{}) {
+	b.Bind()
 	v := reflect.ValueOf(data)
 	size := int(v.Type().Elem().Size()) * v.Len()
 	gl.BufferData(gl.ARRAY_BUFFER, size, gl.Ptr(data), gl.STATIC_DRAW)
+	b.Unbind()
 }
 
 func (b *Buffer) SetItem(index int, data interface{}) {
+	b.Bind()
 	v := reflect.ValueOf(data)
 	size := int(v.Type().Size())
 	slice := reflect.Append(
 		reflect.MakeSlice(reflect.SliceOf(v.Type()), 0, 1), v).Interface()
 	gl.BufferSubData(gl.ARRAY_BUFFER, size*index, size, gl.Ptr(slice))
+	b.Unbind()
 }

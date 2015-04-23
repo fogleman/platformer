@@ -1,34 +1,29 @@
-package pf
+package gfx
 
-import (
-	"log"
-
-	"github.com/fogleman/platformer/gfx"
-)
+import "log"
 
 type Layer struct {
 	sheet       *Sheet
-	program     *gfx.Program
-	buffer      *gfx.Buffer
+	program     *Program
+	buffer      *Buffer
 	matrixLoc   int
 	samplerLoc  int
 	positionLoc int
 	uvLoc       int
-	matrix      gfx.Matrix
+	matrix      Matrix
 }
 
 func NewLayer(sheet *Sheet) *Layer {
-	program, err := gfx.NewProgram(layerVertexSource, layerFragmentSource)
+	program, err := NewProgram(layerVertexSource, layerFragmentSource)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	buffer := gfx.NewBuffer()
-	buffer.Bind()
-	tiles := make([]Tile, 17)
-	for i := 0; i < 16; i++ {
+	buffer := NewBuffer()
+	tiles := make([]Tile, 33)
+	for i := 0; i < 32; i++ {
 		tiles[i] = sheet.Tile("GrassMid", i*128, 0)
 	}
-	tiles[16] = sheet.Tile("AlienBlueStand", 200, 128)
+	tiles[32] = sheet.Tile("AlienGreenStand", 200, 128)
 	buffer.SetItems(tiles)
 	layer := Layer{}
 	layer.sheet = sheet
@@ -41,6 +36,10 @@ func NewLayer(sheet *Sheet) *Layer {
 	return &layer
 }
 
+func (layer *Layer) SetMatrix(matrix Matrix) {
+	layer.matrix = matrix
+}
+
 func (layer *Layer) Draw() {
 	program := layer.program
 	program.Use()
@@ -48,7 +47,7 @@ func (layer *Layer) Draw() {
 	program.SetInt(layer.samplerLoc, 0)
 	program.SetBuffer(layer.positionLoc, 2, 0, 16, layer.buffer)
 	program.SetBuffer(layer.uvLoc, 2, 8, 16, layer.buffer)
-	program.DrawTriangles(0, 6*17)
+	program.DrawTriangles(0, 6*33)
 }
 
 const layerVertexSource = `

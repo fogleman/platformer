@@ -45,19 +45,19 @@ func Run() {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
-	sheet, err := NewSheet("textures/sprites.png", "textures/sprites.csv")
+	sheet, err := gfx.NewSheetFromFile(0, "textures/sprites.png", "textures/sprites.csv")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	layer := NewLayer(sheet)
+	layer := gfx.NewLayer(sheet)
 
 	// run loop
 	for !window.ShouldClose() {
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 		w, h := window.GetFramebufferSize()
-		layer.matrix = gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1)
+		layer.SetMatrix(gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1))
 		layer.Draw()
 		window.SwapBuffers()
 		glfw.PollEvents()
