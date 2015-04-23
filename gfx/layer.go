@@ -23,7 +23,10 @@ func NewLayer(sheet *Sheet) *Layer {
 	for i := 0; i < 32; i++ {
 		tiles[i] = sheet.Tile("GrassMid", i*128, 0)
 	}
-	tiles[32] = sheet.Tile("AlienGreenStand", 200, 128)
+	sprite := sheet.Sprite("AlienGreenStand")
+	sprite.SetAnchor(0.5, 0)
+	sprite.SetPosition(100, 128)
+	tiles[32] = sprite.Tile()
 	buffer.SetItems(tiles)
 	layer := Layer{}
 	layer.sheet = sheet
