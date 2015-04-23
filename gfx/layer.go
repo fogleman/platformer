@@ -18,25 +18,28 @@ func NewLayer(sheet *Sheet) *Layer {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	buffer := NewBuffer()
-	tiles := make([]Tile, 33)
-	for i := 0; i < 32; i++ {
-		tiles[i] = sheet.Tile("GrassMid", i*128, 0)
-	}
-	sprite := sheet.Sprite("AlienGreenStand")
-	sprite.SetAnchor(0.5, 0)
-	sprite.SetPosition(100, 128)
-	tiles[32] = sprite.Tile()
-	buffer.SetItems(tiles)
 	layer := Layer{}
 	layer.sheet = sheet
 	layer.program = program
-	layer.buffer = buffer
+	layer.buffer = NewBuffer()
 	layer.matrixLoc = program.UniformLocation("matrix")
 	layer.samplerLoc = program.UniformLocation("sampler")
 	layer.positionLoc = program.AttributeLocation("position")
 	layer.uvLoc = program.AttributeLocation("uv")
+	layer.SetTiles([]Tile{Tile{}})
 	return &layer
+}
+
+func (layer *Layer) SetTiles(tiles []Tile) {
+	layer.buffer.SetItems(tiles)
+}
+
+func (layer *Layer) SetSprites(sprites []*Sprite) {
+	tiles := make([]Tile, len(sprites))
+	for i, sprite := range sprites {
+		tiles[i] = sprite.Tile()
+	}
+	layer.SetTiles(tiles)
 }
 
 func (layer *Layer) SetMatrix(matrix Matrix) {

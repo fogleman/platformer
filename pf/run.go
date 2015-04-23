@@ -2,6 +2,7 @@ package pf
 
 import (
 	"log"
+	"math"
 	"runtime"
 
 	"github.com/fogleman/platformer/gfx"
@@ -50,15 +51,35 @@ func Run() {
 		log.Fatalln(err)
 	}
 
-	layer := gfx.NewLayer(sheet)
+	backgroundLayer := gfx.NewLayer(sheet)
+	spriteLayer := gfx.NewLayer(sheet)
+
+	var tiles []gfx.Tile
+	for i := 0; i < 32; i++ {
+		tiles = append(tiles, sheet.Tile("GrassMid", i*128, 0))
+	}
+	backgroundLayer.SetTiles(tiles)
+
+	var sprites []*gfx.Sprite
+	sprite := sheet.Sprite("AlienGreenStand")
+	sprite.SetAnchor(0.5, 0)
+	sprite.SetPosition(0, 128)
+	sprites = append(sprites, sprite)
+	spriteLayer.SetSprites(sprites)
 
 	// run loop
 	for !window.ShouldClose() {
+		t := glfw.GetTime()
+		w, h := window.GetFramebufferSize()
+		matrix := gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1)
+		sprite.X = math.Mod(t*100, float64(w))
+		spriteLayer.SetSprites(sprites)
 		gl.ClearColor(0.78, 0.95, 0.96, 1)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
-		w, h := window.GetFramebufferSize()
-		layer.SetMatrix(gfx.Orthographic(0, float64(w), 0, float64(h), -1, 1))
-		layer.Draw()
+		backgroundLayer.SetMatrix(matrix)
+		backgroundLayer.Draw()
+		spriteLayer.SetMatrix(matrix)
+		spriteLayer.Draw()
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
