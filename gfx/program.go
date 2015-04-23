@@ -41,7 +41,6 @@ func (p *Program) Delete() {
 
 func (p *Program) Use() {
 	gl.UseProgram(p.Handle)
-	p.AttributeNames()
 }
 
 func (p *Program) AttributeNames() []string {
