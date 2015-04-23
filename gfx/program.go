@@ -9,10 +9,21 @@ import (
 )
 
 type Program struct {
-	Handle uint32
+	Handle             uint32
+	attributeLocations []int
 }
 
-func NewProgram(vertexPath, fragmentPath string) (*Program, error) {
+func NewProgram(vertexSource, fragmentSource string) (*Program, error) {
+	handle, err := CompileProgram(vertexSource, fragmentSource)
+	if err != nil {
+		return nil, err
+	}
+	program := Program{Handle: handle}
+	program.attributeLocations = program.AttributeLocations()
+	return &program, nil
+}
+
+func NewProgramFromFile(vertexPath, fragmentPath string) (*Program, error) {
 	vertexSource, err := ioutil.ReadFile(vertexPath)
 	if err != nil {
 		return nil, err
@@ -21,11 +32,7 @@ func NewProgram(vertexPath, fragmentPath string) (*Program, error) {
 	if err != nil {
 		return nil, err
 	}
-	handle, err := CompileProgram(string(vertexSource), string(fragmentSource))
-	if err != nil {
-		return nil, err
-	}
-	return &Program{handle}, nil
+	return NewProgram(string(vertexSource), string(fragmentSource))
 }
 
 func (p *Program) Delete() {
@@ -34,6 +41,32 @@ func (p *Program) Delete() {
 
 func (p *Program) Use() {
 	gl.UseProgram(p.Handle)
+	p.AttributeNames()
+}
+
+func (p *Program) AttributeNames() []string {
+	var count int32
+	gl.GetProgramiv(p.Handle, gl.ACTIVE_ATTRIBUTES, &count)
+	result := make([]string, count)
+	for i := 0; i < int(count); i++ {
+		var size int32
+		var dataType uint32
+		name := strings.Repeat("\x00", 256)
+		gl.GetActiveAttrib(
+			p.Handle, uint32(i), 256, nil,
+			&size, &dataType, gl.Str(name))
+		result[i] = name
+	}
+	return result
+}
+
+func (p *Program) AttributeLocations() []int {
+	names := p.AttributeNames()
+	result := make([]int, len(names))
+	for i, name := range names {
+		result[i] = p.AttributeLocation(name)
+	}
+	return result
 }
 
 func (p *Program) AttributeLocation(name string) int {
@@ -65,12 +98,12 @@ func (p *Program) SetFloat(location int, value float32) {
 	gl.Uniform1f(int32(location), value)
 }
 
-func (p *Program) Draw(count int, attributes ...int) {
-	for _, location := range attributes {
+func (p *Program) DrawTriangles(offset, count int) {
+	for _, location := range p.attributeLocations {
 		gl.EnableVertexAttribArray(uint32(location))
 	}
-	gl.DrawArrays(gl.TRIANGLES, 0, int32(count))
-	for _, location := range attributes {
+	gl.DrawArrays(gl.TRIANGLES, int32(offset), int32(count))
+	for _, location := range p.attributeLocations {
 		gl.DisableVertexAttribArray(uint32(location))
 	}
 }

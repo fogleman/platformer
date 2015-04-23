@@ -18,7 +18,7 @@ type Layer struct {
 }
 
 func NewLayer(sheet *Sheet) *Layer {
-	program, err := gfx.NewProgram("shaders/vertex.glsl", "shaders/fragment.glsl")
+	program, err := gfx.NewProgram(layerVertexSource, layerFragmentSource)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -48,5 +48,33 @@ func (layer *Layer) Draw() {
 	program.SetInt(layer.samplerLoc, 0)
 	program.SetBuffer(layer.positionLoc, 2, 0, 16, layer.buffer)
 	program.SetBuffer(layer.uvLoc, 2, 8, 16, layer.buffer)
-	program.Draw(6*17, layer.positionLoc, layer.uvLoc)
+	program.DrawTriangles(0, 6*17)
 }
+
+const layerVertexSource = `
+#version 120
+
+uniform mat4 matrix;
+
+attribute vec4 position;
+attribute vec2 uv;
+
+varying vec2 fragment_uv;
+
+void main() {
+    gl_Position = matrix * position;
+    fragment_uv = uv;
+}
+`
+
+const layerFragmentSource = `
+#version 120
+
+uniform sampler2D sampler;
+
+varying vec2 fragment_uv;
+
+void main() {
+    gl_FragColor = texture2D(sampler, fragment_uv);
+}
+`
